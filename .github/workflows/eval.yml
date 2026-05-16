@@ -1,0 +1,63 @@
+name: Weekly eval
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 09:00 IST every Monday.
+    - cron: "30 3 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    env:
+      CAUSALITH_API_URL: ${{ vars.CAUSALITH_API_URL }}
+      CAUSALITH_API_KEY: ${{ secrets.CAUSALITH_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run deterministic unit tests
+        run: |
+          python -m coverage run -m pytest evals
+          python -m coverage xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+      - name: Run public API gold eval
+        run: |
+          API_URL="${CAUSALITH_API_URL:-https://api.causalith.com}"
+          python run_gold_eval.py --api-url "$API_URL" --emit-json reports/gold_eval_latest.json
+
+      - name: Update README metrics table
+        run: python scripts/update_readme_metrics.py --report reports/gold_eval_latest.json --readme README.md
+
+      - name: Upload eval report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-eval-latest
+          path: reports/gold_eval_latest.json
+
+      - name: Commit README update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet README.md; then
+            git add README.md
+            git commit -m "Update weekly eval metrics"
+            git push
+          else
+            echo "README metrics already current"
+          fi
