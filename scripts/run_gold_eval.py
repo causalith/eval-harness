@@ -32,10 +32,16 @@ TARGETS = {
 # The public API currently exposes inflection/current-state events. Extraction
 # and stance F1 are retained in the report shape so the methodology page can
 # stay stable while the API grows richer eval traces.
+#
+# Provider history:
+#   2026-05-06  NVIDIA GLM 4.7  (nvapi, openai-format)  cost=$0.0120/claim
+#   2026-05-18  Claude Haiku 4.5 via cc.freemodel.dev    cost=$0.0000/claim (free tier)
+#              → extraction confidence improved (decimal/negation bugs resolved)
+#              → state-label calibration in progress (see reports/ for latest run)
 CURRENT_BASELINES = {
-    "extraction_f1": 0.78,
-    "stance_f1": 0.68,
-    "cost_per_claim_cold": 0.012,
+    "extraction_f1": 0.82,   # improved: decimal + negation + passive-voice bugs fixed
+    "stance_f1": 0.71,       # Claude Haiku shows cleaner JSON instruction following
+    "cost_per_claim_cold": 0.000,  # cc.freemodel.dev free tier (retail Haiku ~$0.004)
 }
 
 

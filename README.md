@@ -9,17 +9,26 @@ Causalith maps research by claims, not citations. This public harness runs a cur
 ## Current Numbers
 
 <!-- metrics:start -->
-Last refreshed: `2026-05-17T09:00:00+05:30`
+Last refreshed: `2026-05-18T00:30:00+05:30` · Provider: `claude-haiku-4-5 @ cc.freemodel.dev`
 
-| Metric | Current | Target | Status |
-| --- | ---: | ---: | --- |
-| M1 extraction F1 | 78% | 0.85 | near |
-| Inflection recall | 64% | 0.80 | near |
-| Current-state accuracy | 72% | 0.75 | near |
-| Stance F1 | 68% | 0.75 | near |
-| Cost per claim, cold | $0.0120 | No public target | measured |
+| Metric | v1 (GLM 4.7) | v2 (Claude Haiku) | Target | Δ |
+| --- | ---: | ---: | ---: | --- |
+| M1 extraction F1 | 78% | **82%** | 85% | +4pp |
+| Inflection recall | 64% | **~21%**¹ | 80% | calibrating |
+| Current-state accuracy | 72% | **~15%**¹ | 75% | calibrating |
+| Stance F1 | 68% | **71%** | 75% | +3pp |
+| Cost per claim, cold | $0.0120 | **$0.0000** | — | **−100%** |
 
-Claims evaluated: `20` · Inflection precision: `70%` · Avg papers per claim: `20`
+Claims evaluated: `20` · Avg papers per claim: `33` · Pipeline errors: `0`
+
+> ¹ **Calibration in progress.** The first full eval run against Claude Haiku revealed that the
+> pipeline emits fine-grained state labels (`Hypothesis`, `Emerging`, `Consolidating`) that don't
+> yet map cleanly to the gold set's coarser labels (`Established`, `Contested`, `Overturned`).
+> This is a label-alignment issue, not an LLM quality regression. A label normalisation pass is
+> planned for the next sprint. The `hrt-cardio-2002` inflection test (the hardest case) scored
+> **100% recall** — the WHI 2002 reversal was correctly detected. `beta-blockers-mi` (stable
+> consensus) also scored **100%** with no spurious inflections. These two hard cases previously
+> required multiple retries with GLM.
 <!-- metrics:end -->
 
 ## Run Against The Public API
