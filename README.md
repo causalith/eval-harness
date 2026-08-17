@@ -9,7 +9,7 @@ Causalith maps research by claims, not citations. This public harness runs a cur
 ## Current Numbers
 
 <!-- metrics:start -->
-Last refreshed: `2026-08-10T05:06:26.532654+00:00`
+Last refreshed: `2026-08-17T04:13:23.158496+00:00`
 
 | Metric | Current | Target | Status |
 | --- | ---: | ---: | --- |
